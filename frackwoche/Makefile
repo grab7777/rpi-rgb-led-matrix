@@ -32,6 +32,9 @@ flashes : flashes.o
 flashes : flashes.o $(RGB_LIBRARY)
 	$(CC) $< -o $@ $(LDFLAGS) -lstdc++
 
+textdisplay : textdisplay.o $(RGB_LIBRARY)
+	$(CC) $< -o $@ $(LDFLAGS) -lstdc++
+
 %.o : %.cc
 	$(CXX) -I$(RGB_INCDIR) $(CXXFLAGS) -c -o $@ $<
 

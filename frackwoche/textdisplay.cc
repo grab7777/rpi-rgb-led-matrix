@@ -9,12 +9,19 @@
 #include "graphics.h"
 
 #include <getopt.h>
+#include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 
 using namespace rgb_matrix;
+using namespace std;
+
+volatile bool interrupt_received = false;
+static void InterruptHandler(int signo) {
+  interrupt_received = true;
+}
 
 static int usage(const char *progname)
 {
@@ -52,14 +59,11 @@ int main(int argc, char *argv[])
     rgb_matrix::RuntimeOptions runtime_opt;
 
     // make an array with 3 strings for the options
-    int options_count = 3;
-    char **options = new char *[options_count];
-    options[0] = "--led-cols=64"; 
-    options[1] = "--led-rows=64"; 
-    options[2] = "-f ../fonts/5x8.bdf";
+    // int options_count = 3;
+    // char *options[options_count] = {"--led-cols=64", "--led-rows=64", "-f ../fonts/5x8.bdf"};
     
 
-    if (!rgb_matrix::ParseOptionsFromFlags(options_count, &options,
+    if (!rgb_matrix::ParseOptionsFromFlags(&argc, &argv,
                                            &matrix_options, &runtime_opt))
     {
         return usage(argv[0]);
@@ -179,19 +183,20 @@ int main(int argc, char *argv[])
     // split the input into lines with 13 characters
     char line[14];
     int offset = 0;
-    while (strncpy(&line, &text_buffer + offset, sizeof(line)))
+    while (strncpy(line, text_buffer + offset, sizeof(line)))
     {
         const size_t last = strlen(line);
         if (last > 0)
             line[last - 1] = '\0'; // remove newline.
-        bool line_empty = strlen(line) == 0;
-        if ((y + font.height() > canvas->height()) || line_empty)
-        {
-            canvas->Fill(flood_color.r, flood_color.g, flood_color.b);
-            y = y_orig;
-        }
-        if (line_empty)
-            continue;
+        // bool line_empty = strlen(line) == 0;
+        // if ((y + font.height() > canvas->height()) || line_empty)
+        // {
+        //  canvas->Fill(flood_color.r, flood_color.g, flood_color.b);
+        //    y = y_orig;
+        // }
+        // if (line_empty)
+        //     continue;
+	
         if (outline_font)
         {
             // The outline font, we need to write with a negative (-2) text-spacing,
@@ -207,7 +212,23 @@ int main(int argc, char *argv[])
                              color, outline_font ? NULL : &bg_color, line,
                              letter_spacing);
         y += font.height();
-        offset += last;
+        offset += last - 1;
+	fprintf(stderr, "line: %s\n", line);
+	fprintf(stderr, "last: %d\n", last);
+	int x = 10;
+	if (last < 10) {
+	    fprintf(stderr, "------------------break\n");
+	    break;
+	}
+    }
+
+    signal(SIGTERM, InterruptHandler);
+    signal(SIGINT, InterruptHandler);
+
+    int sleep_for = 5;
+    while (!interrupt_received && sleep_for > 0){	
+	    sleep(1);
+	    sleep_for -= 1;
     }
 
     // Finished. Shut down the RGB matrix.
