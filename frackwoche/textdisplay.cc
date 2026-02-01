@@ -79,9 +79,10 @@ int main(int argc, char *argv[])
     int x_orig = 0;
     int y_orig = 0;
     int letter_spacing = 0;
+    char text_buffer[1024];
 
     int opt;
-    while ((opt = getopt(argc, argv, "x:y:f:C:B:O:S:F:")) != -1)
+    while ((opt = getopt(argc, argv, "x:y:f:C:B:O:S:F:t:")) != -1)
     {
         switch (opt)
         {
@@ -93,6 +94,9 @@ int main(int argc, char *argv[])
             break;
         case 'f':
             bdf_font_file = strdup(optarg);
+            break;
+        case 't':
+            strncpy(text_buffer, optarg, sizeof(text_buffer));
             break;
         case 'S':
             letter_spacing = atoi(optarg);
@@ -176,10 +180,10 @@ int main(int argc, char *argv[])
     }
 
     canvas->Fill(flood_color.r, flood_color.g, flood_color.b);
-    char text_buffer[1024];
+    // char text_buffer[1024];
     // write to the console to provide a text
-    printf("Message: ");
-    fgets(text_buffer, sizeof(text_buffer), stdin);
+    // printf("Message: ");
+    // fgets(text_buffer, sizeof(text_buffer), stdin);
     // split the input into lines with 13 characters
     char line[14];
     int offset = 0;
@@ -215,8 +219,8 @@ int main(int argc, char *argv[])
         offset += last - 1;
 	fprintf(stderr, "line: %s\n", line);
 	fprintf(stderr, "last: %d\n", last);
-	int x = 10;
-	if (last < 10) {
+	
+    if (last < 10) {
 	    fprintf(stderr, "------------------break\n");
 	    break;
 	}
