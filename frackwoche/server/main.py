@@ -8,8 +8,8 @@ HOST = "localhost"
 PORT = 9990
 LED_ROWS = 64
 LED_COLS = 64
-FONT = "../fonts/5x8.bdf"
-command = f"./textdisplay --led-rows={LED_ROWS} --led-cols={LED_COLS} -f {FONT} -t "
+FONT = "../../fonts/5x8.bdf"
+command = f"sudo ../textdisplay --led-rows={LED_ROWS} --led-cols={LED_COLS} -f {FONT} -t"
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     s.bind((HOST, PORT))
     s.listen()
@@ -25,10 +25,10 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             message = data.decode("utf-8")
             message = message.split("\r\n\r\n")[-1]  # get the body of the request
             print(f"Sending message: {message}")
-            print(f"Executing command: {command} {message}")
+            print(f"Executing command: {command} '{message}'")
             try:
                 result = subprocess.check_output(
-                    command + message, shell=True, stderr=subprocess.STDOUT
+                    f"{command} '{message}'", shell=True, stderr=subprocess.STDOUT
                 )
                 conn.sendall(result)
             except subprocess.CalledProcessError as e:
