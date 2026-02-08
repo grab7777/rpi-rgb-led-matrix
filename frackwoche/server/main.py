@@ -4,7 +4,7 @@
 import socket
 import subprocess
 
-HOST = "localhost"
+HOST = "0.0.0.0"
 PORT = 9990
 LED_ROWS = 64
 LED_COLS = 64
