@@ -34,11 +34,12 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             print(f"Sending message: {message}")
             print(f"Executing command: {command} '{message}'")
             try:
+                conn.sendall(b"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\n")
+                conn.close()
                 result = subprocess.call(
                     f"{command} '{message}'", shell=True, stderr=subprocess.STDOUT
                 )
                 # send a http OK response
-                conn.sendall(b"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\n")
             except subprocess.CalledProcessError as e:
                 conn.sendall(e.output)
             except Exception as e:
