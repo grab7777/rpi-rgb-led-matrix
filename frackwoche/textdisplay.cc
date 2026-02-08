@@ -189,18 +189,8 @@ int main(int argc, char *argv[])
     int offset = 0;
     while (strncpy(line, text_buffer + offset, sizeof(line)))
     {
+        line[sizeof(line) - 1] = '\0'; // ensure null-termination
         const size_t last = strlen(line);
-        if (last > 0)
-            line[last - 1] = '\0'; // remove newline.
-        // bool line_empty = strlen(line) == 0;
-        // if ((y + font.height() > canvas->height()) || line_empty)
-        // {
-        //  canvas->Fill(flood_color.r, flood_color.g, flood_color.b);
-        //    y = y_orig;
-        // }
-        // if (line_empty)
-        //     continue;
-	
         if (outline_font)
         {
             // The outline font, we need to write with a negative (-2) text-spacing,
@@ -217,19 +207,19 @@ int main(int argc, char *argv[])
                              letter_spacing);
         y += font.height();
         offset += last - 1;
-	fprintf(stderr, "line: %s\n", line);
-	fprintf(stderr, "last: %d\n", last);
+        fprintf(stderr, "line: %s\n", line);
+        fprintf(stderr, "last: %d\n", last);
 	
-    if (last < 10) {
-	    fprintf(stderr, "------------------break\n");
-	    break;
-	}
+        if (last < 10) {
+            fprintf(stderr, "------------------break\n");
+            break;
+        }
     }
 
     signal(SIGTERM, InterruptHandler);
     signal(SIGINT, InterruptHandler);
 
-    int sleep_for = 5;
+    int sleep_for = 60;
     while (!interrupt_received && sleep_for > 0){	
 	    sleep(1);
 	    sleep_for -= 1;

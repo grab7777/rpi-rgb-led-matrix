@@ -39,7 +39,6 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                 result = subprocess.call(
                     f"{command} '{message}'", shell=True, stderr=subprocess.STDOUT
                 )
-                # send a http OK response
             except subprocess.CalledProcessError as e:
                 conn.sendall(e.output)
             except Exception as e:
