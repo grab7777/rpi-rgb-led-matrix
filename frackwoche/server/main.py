@@ -8,11 +8,13 @@ HOST = "localhost"
 PORT = 9990
 LED_ROWS = 64
 LED_COLS = 64
-FONT = "../../fonts/5x8.bdf"
-command = f"sudo ../textdisplay --led-rows={LED_ROWS} --led-cols={LED_COLS} -f {FONT} -t"
+
+BASE_FOLDER = ".."
+FONT = f"{BASE_FOLDER}/../fonts/5x8.bdf"
+command = f"sudo {BASE_FOLDER}/textdisplay --led-rows={LED_ROWS} --led-cols={LED_COLS} -f {FONT} -t"
 
 def sanitise_input(input_str):
-    return "".join([c for c in input_str if c.isalnum() or c.isspace() or c in ".,!?-äüöÄÜÖ"]).strip()
+    return "".join([c for c in input_str if c.isalnum() or c.isspace() or c in ".,!?-ä�ÄÖÜ"]).strip()
 
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     s.bind((HOST, PORT))
