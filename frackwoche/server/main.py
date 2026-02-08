@@ -33,3 +33,8 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                 conn.sendall(result)
             except subprocess.CalledProcessError as e:
                 conn.sendall(e.output)
+            except Exception as e:
+                conn.sendall(str(e).encode("utf-8"))
+            except KeyboardInterrupt:
+                print("Shutting down server...")
+                break
