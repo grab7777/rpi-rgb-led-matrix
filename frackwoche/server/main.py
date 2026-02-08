@@ -10,6 +10,10 @@ LED_ROWS = 64
 LED_COLS = 64
 FONT = "../../fonts/5x8.bdf"
 command = f"sudo ../textdisplay --led-rows={LED_ROWS} --led-cols={LED_COLS} -f {FONT} -t"
+
+def sanitise_input(input_str):
+    return "".join([c for c in input_str if c.isalnum() or c.isspace() or c in ".,!?-äüöÄÜÖ"]).strip()
+
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     s.bind((HOST, PORT))
     s.listen()
@@ -24,6 +28,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                 break
             message = data.decode("utf-8")
             message = message.split("\r\n\r\n")[-1]  # get the body of the request
+            message = sanitise_input(message)
             print(f"Sending message: {message}")
             print(f"Executing command: {command} '{message}'")
             try:
